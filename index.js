@@ -1,0 +1,68 @@
+const API_KEY = "live_kjEbMVJb1mxsl62izoARPpoocbkaUlQXDaagdqFGrallBCgXaMNV19O8G8QPyPgJ";
+const BASE_URL = "https://api.thecatapi.com/v1";
+
+const breedSelect = document.getElementById("breedSelect");
+const carousel = document.getElementById("carousel");
+const infoDump = document.getElementById("infoDump");
+
+async function initialLoad() {
+  try {
+    const res = await fetch(`${BASE_URL}/breeds`, {
+      headers: { "x-api-key": API_KEY }
+    });
+
+    const breeds = await res.json();
+
+    breeds.forEach(breed => {
+      const option = document.createElement("option");
+      option.value = breed.id;
+      option.textContent = breed.name;
+      breedSelect.appendChild(option);
+    });
+
+    loadBreed(breeds[0].id);
+  } catch (err) {
+    infoDump.textContent = "Error loading breeds.";
+  }
+}
+
+async function loadBreed(breedId) {
+  carousel.innerHTML = "";
+  infoDump.innerHTML = "";
+
+  try {
+    const res = await fetch(
+      `${BASE_URL}/images/search?breed_ids=${breedId}&limit=5`,
+      { headers: { "x-api-key": API_KEY } }
+    );
+
+    const data = await res.json();
+
+    if (!data.length) {
+      infoDump.textContent = "No images found.";
+      return;
+    }
+
+    data.forEach(item => {
+      const img = document.createElement("img");
+      img.src = item.url;
+      img.className = "carousel-img";
+      carousel.appendChild(img);
+    });
+
+    const b = data[0].breeds?.[0];
+    if (b) {
+      infoDump.innerHTML =
+        `<h2>${b.name}</h2>
+         <p><strong>Origin:</strong> ${b.origin}</p>
+         <p><strong>Temperament:</strong> ${b.temperament}</p>
+         <p>${b.description}</p>`;
+    }
+  } catch (err) {
+    infoDump.textContent = "Error loading breed.";
+  }
+}
+
+breedSelect.addEventListener("change", e => loadBreed(e.target.value));
+
+initialLoad();
