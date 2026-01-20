@@ -1,3 +1,4 @@
+//Go to the folder with the files.Open a terminal.Type python -m http.server 8000 and press enter.Open a browser like Edge. Go to http://localhost:8000/browser.html.
 const API_KEY = "live_kjEbMVJb1mxsl62izoARPpoocbkaUlQXDaagdqFGrallBCgXaMNV19O8G8QPyPgJ";
 const BASE_URL = "https://api.thecatapi.com/v1";
 
